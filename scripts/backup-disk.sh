@@ -120,8 +120,12 @@ cmd_plan() {
     # --dry-run --stats: what a real run would copy now.
     local out
     local excl; build_excludes excl
-    out="$(rsync -aAX --dry-run --stats "${excl[@]}" \
-        "${srcs[@]}" "$real/Nothing-Backups/.plan-probe" 2>/dev/null)" || true
+    # --link-dest against the latest snapshot, so the estimate is the delta
+    # the real run would copy, not the whole source again.
+    local root; root="$(dest_root "$real" "$profile")"
+    local linkarg=(); [ -d "$root/latest" ] && linkarg=("--link-dest=$root/latest")
+    out="$(rsync -aAX --dry-run --stats "${linkarg[@]}" "${excl[@]}" \
+        "${srcs[@]}" "$root/.plan-probe" 2>/dev/null)" || true
     local files size
     files="$(printf '%s' "$out" | sed -n 's/^Number of regular files transferred: //p' | tr -d ',')"
     size="$(printf '%s' "$out" | sed -n 's/^Total transferred file size: \([0-9,]*\).*/\1/p' | tr -d ',')"
@@ -130,7 +134,10 @@ cmd_plan() {
 
 cmd_snapshots() {
     local profile="$1" dest="$2"
-    local root; root="$(dest_root "$dest" "$profile")"
+    # realpath, to match where cmd_run/cmd_plan write (a symlinked or
+    # trailing-slash destination would otherwise list nothing).
+    local real; real="$(cd "$dest" 2>/dev/null && pwd -P)" || { printf '[]\n'; return 0; }
+    local root; root="$(dest_root "$real" "$profile")"
     [ -d "$root" ] || { printf '[]\n'; return 0; }
     printf '['
     local first=1 d name
@@ -142,7 +149,7 @@ cmd_snapshots() {
         if [ -f "$d/.nothing-size" ]; then
             bytes="$(cat "$d/.nothing-size")"
         else
-            bytes="$(du -sb --apparent-size "$d" 2>/dev/null | cut -f1)"
+            bytes="$(du -sb "$d" 2>/dev/null | cut -f1)"
         fi
         [ "$first" = 1 ] || printf ','
         first=0
@@ -178,13 +185,13 @@ cmd_run() {
     local rc=$?
     if [ "$rc" -ne 0 ] && [ "$rc" -ne 23 ] && [ "$rc" -ne 24 ]; then
         echo "FAILED rsync exit $rc" >&2
-        rmdir "$target" 2>/dev/null || true
+        rm -rf -- "$target" 2>/dev/null || true
         return "$rc"
     fi
     ln -sfn "$stamp" "$root/latest"
     # Record the snapshot's apparent size once, so listing it later is a
     # file read, not a walk of a possibly huge tree.
-    du -sb --apparent-size "$target" 2>/dev/null | cut -f1 > "$target/.nothing-size" || true
+    du -sb "$target" 2>/dev/null | cut -f1 > "$target/.nothing-size" || true
 
     # Prune: keep the newest N dated snapshots, drop the rest. Hard links mean
     # removing one only frees what was unique to it.
@@ -196,7 +203,7 @@ cmd_run() {
         done < <(find "$root" -maxdepth 1 -mindepth 1 -type d \
                     -name '20*' | sort -r | tail -n +"$((keep + 1))")
     fi
-    echo "DONE $stamp"
+    printf 'DONE %s\r\n' "$stamp"
 }
 
 case "${1:-}" in

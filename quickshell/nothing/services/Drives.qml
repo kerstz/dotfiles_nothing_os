@@ -127,7 +127,7 @@ Singleton {
                 continue;
             if (d.encrypted && !d.unlocked)
                 root.notify(d.label + " plugged in", "Encrypted — unlock it to use it");
-            else if (d.mount === "" && Config.drivesAutomount)
+            else if (!d.encrypted && d.mount === "" && Config.drivesAutomount)
                 root.mount(d.path);
             else
                 root.notify(d.label + " plugged in", d.size + (d.mount !== "" ? " · " + d.mount : ""));
@@ -197,6 +197,7 @@ Singleton {
         }
         onExited: (code) => {
             root.unlockFor = "";
+            unlocker.pass = "";       // defensive: in case running never toggled
             if (code !== 0) {
                 const why = (unlockErr.text.trim().split("\n").pop() || ("exit " + code))
                     .replace(/^Error [^:]*: ?/, "");
@@ -234,13 +235,22 @@ Singleton {
     // Unmount every mounted partition of the same disk, then power the
     // disk off: once that answers, pulling the cable is safe.
     function eject(d: var): void {
-        // A mounted cleartext device unmounts by its own node; its LUKS
-        // parent is locked rather than unmounted.
-        const parts = root.list.filter(x => x.disk === d.disk && x.mount !== "")
+        const onDisk = root.list.filter(x => x.disk === d.disk);
+        // Unmount every mounted filesystem (the cleartext child for an
+        // unlocked LUKS), then lock each LUKS mapping, then power off: a
+        // still-open mapping holds the disk and power-off would be refused.
+        const unmounts = onDisk.filter(x => x.mount !== "")
             .map(x => (x.encrypted && x.unlocked) ? x.clear : x.path);
-        const script = 'for p in "$@"; do [ "$p" = -- ] && break; udisksctl unmount -b "$p" --no-user-interaction || exit 1; shift; done; shift; '
-                     + 'udisksctl power-off -b "$1" --no-user-interaction';
-        root.run("eject", d.disk, ["sh", "-c", script, "eject"].concat(parts, ["--", d.disk]));
+        const locks = onDisk.filter(x => x.encrypted && x.unlocked).map(x => x.path);
+        // Counts rather than a sentinel, so a path could never be mistaken
+        // for the "--" marker.
+        const script = 'disk="$1"; shift; n="$1"; shift; '
+                     + 'while [ "$n" -gt 0 ]; do udisksctl unmount -b "$1" --no-user-interaction || true; shift; n=$((n-1)); done; '
+                     + 'n="$1"; shift; while [ "$n" -gt 0 ]; do udisksctl lock -b "$1" || exit 1; shift; n=$((n-1)); done; '
+                     + 'udisksctl power-off -b "$disk" --no-user-interaction';
+        root.run("eject", d.disk, ["sh", "-c", script, "eject", d.disk,
+                                   String(unmounts.length)].concat(unmounts,
+                                   [String(locks.length)], locks));
     }
 
     // One udisksctl at a time; the rest wait their turn (a disk with two
