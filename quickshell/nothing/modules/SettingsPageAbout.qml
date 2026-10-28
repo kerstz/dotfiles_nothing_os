@@ -17,6 +17,12 @@ SettingsPage {
     property string restoreArmed: ""
     Timer { id: disarmRestore; interval: 4000; onTriggered: page.restoreArmed = "" }
 
+    // 20261028-213926 -> "28/10/2026 21:39"
+    function snapshotLabel(name: string): string {
+        const m = name.match(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})/);
+        return m ? m[3] + "/" + m[2] + "/" + m[1] + " " + m[4] + ":" + m[5] : name;
+    }
+
     // config-20261023-201500.json -> "23/10/2026 20:15"
     function backupLabel(name: string): string {
         const m = name.match(/^config-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})/);
@@ -379,6 +385,262 @@ SettingsPage {
                         disarmRestore.restart();
                     }
                 }
+            }
+        }
+    }
+
+    // Copy files to another disk: rsync snapshots driven by
+    // services/Backup. The profile chooses what, the destination is any
+    // disk you point it at (an encrypted one is unlocked here first).
+    property string backupArmed: ""
+    Timer { id: disarmBackup; interval: 5000; onTriggered: page.backupArmed = "" }
+
+    NProcess {
+        id: destPicker
+        command: ["zenity", "--file-selection", "--directory",
+                  "--title=Choose the backup disk folder"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const d = text.trim();
+                if (d !== "") { Config.backupDiskDest = d; Config.save(); Backup.refreshSnapshots(); }
+            }
+        }
+    }
+
+    NProcess {
+        id: folderPickerBk
+        command: ["zenity", "--file-selection", "--directory",
+                  "--title=Add a folder to back up"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const d = text.trim();
+                if (d === "") return;
+                const list = (Config.backupDiskCustom ?? []).slice();
+                if (list.indexOf(d) < 0) { list.push(d); Config.backupDiskCustom = list; Config.save(); }
+            }
+        }
+    }
+
+    SettingsSection {
+        title: "Disk backup"
+
+        Component.onCompleted: Backup.refresh()
+
+        SettingRow {
+            key: "backupDiskProfile"
+            label: "What to back up"
+            hint: Backup.profileMeta[Config.backupDiskProfile]?.words ?? ""
+        }
+
+        DotPicker {
+            options: [
+                { label: "Session", value: "session" },
+                { label: "Config", value: "config" },
+                { label: "Documents", value: "documents" },
+                { label: "Chosen", value: "custom" }
+            ]
+            current: Config.backupDiskProfile
+            onPicked: (v) => {
+                Config.backupDiskProfile = v; Config.save();
+                Backup.plan = null; Backup.status = ""; Backup.refreshSnapshots();
+            }
+        }
+
+        // Chosen folders, only for the "custom" profile.
+        Repeater {
+            model: Config.backupDiskProfile === "custom" ? (Config.backupDiskCustom ?? []) : []
+            Rectangle {
+                id: cf
+                required property string modelData
+                Layout.fillWidth: true
+                implicitHeight: Theme.px(30)
+                radius: Theme.r.tiny
+                color: Theme.c.surface2
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.leftMargin: Theme.px(10)
+                    anchors.rightMargin: Theme.px(6)
+                    spacing: Theme.px(8)
+                    NText {
+                        Layout.fillWidth: true
+                        text: cf.modelData
+                        elide: Text.ElideMiddle
+                        font.pixelSize: Theme.f.small
+                    }
+                    CircleButton {
+                        icon: "󰅖"; size: Theme.px(20)
+                        onActivated: {
+                            Config.backupDiskCustom = (Config.backupDiskCustom ?? []).filter(x => x !== cf.modelData);
+                            Config.save();
+                        }
+                    }
+                }
+            }
+        }
+
+        SettingRow {
+            key: "backupDiskAddFolder"
+            visible: Config.backupDiskProfile === "custom"
+            label: "Add a folder"
+            hint: "The folders copied by the \"Chosen\" profile"
+            NPillButton { text: "Browse"; onActivated: folderPickerBk.running = true }
+        }
+
+        // ── Destination ──────────────────────────────────────────────
+        SettingRow {
+            key: "backupDiskDest"
+            label: "Backup disk"
+            hint: Config.backupDiskDest !== ""
+                ? "Snapshots go in " + Config.backupDiskDest + "/Nothing-Backups"
+                : "Pick a folder on the disk you back up to"
+            RowLayout {
+                spacing: Theme.px(6)
+                NField {
+                    implicitWidth: Theme.px(150)
+                    text: Config.backupDiskDest
+                    placeholder: "/run/media/you/Backup"
+                    onCommitted: (v) => { Config.backupDiskDest = v.trim(); Config.save(); Backup.refreshSnapshots(); }
+                }
+                NPillButton {
+                    text: "Browse"
+                    onActivated: { GlobalState.settingsOpen = false; destPicker.running = true; }
+                }
+            }
+        }
+
+        // ── Encrypted drives ─────────────────────────────────────────
+        // Shown only while an encrypted drive is plugged in, so the backup
+        // disk can be unlocked without leaving Settings.
+        SettingRow {
+            key: "backupUnlock"
+            visible: Drives.list.some(d => d.encrypted)
+            label: "Encrypted drive"
+            hint: Drives.unlockError !== "" ? Drives.unlockError
+                : "Unlock it, then Browse to its folder above"
+        }
+
+        Repeater {
+            model: Drives.list.filter(d => d.encrypted)
+            Rectangle {
+                id: enc
+                required property var modelData
+                Layout.fillWidth: true
+                implicitHeight: encRow.implicitHeight + Theme.px(14)
+                radius: Theme.r.tiny
+                color: Theme.c.surface2
+                RowLayout {
+                    id: encRow
+                    anchors.fill: parent
+                    anchors.margins: Theme.px(8)
+                    spacing: Theme.px(8)
+                    NIcon {
+                        text: enc.modelData.unlocked ? "󰿆" : "󰌾"
+                        size: Theme.z.icon
+                        color: enc.modelData.unlocked ? Theme.c.on : Theme.c.onDim
+                    }
+                    NText {
+                        Layout.fillWidth: true
+                        text: enc.modelData.label + "  ·  " + enc.modelData.size
+                            + (enc.modelData.unlocked ? "  ·  unlocked" : "")
+                        elide: Text.ElideRight
+                        font.pixelSize: Theme.f.small
+                    }
+                    NField {
+                        id: passField
+                        visible: !enc.modelData.unlocked
+                        implicitWidth: Theme.px(130)
+                        secret: true
+                        placeholder: "passphrase"
+                        onSubmitted: { Drives.unlock(enc.modelData.path, passField.text); passField.text = ""; }
+                    }
+                    NPillButton {
+                        text: Drives.unlockFor === enc.modelData.path ? "…"
+                            : (enc.modelData.unlocked ? "Lock" : "Unlock")
+                        danger: enc.modelData.unlocked
+                        onActivated: {
+                            if (enc.modelData.unlocked) { Drives.lock(enc.modelData); return; }
+                            Drives.unlock(enc.modelData.path, passField.text);
+                            passField.text = "";
+                        }
+                    }
+                    NPillButton {
+                        visible: enc.modelData.unlocked && enc.modelData.mount === ""
+                        text: "Mount"
+                        onActivated: Drives.open(enc.modelData)
+                    }
+                }
+            }
+        }
+
+        // ── Snapshots to keep, and running it ────────────────────────
+        SettingRow {
+            key: "backupDiskKeep"
+            label: "Snapshots to keep"
+            hint: "Older ones are removed after a backup; unchanged files are shared, so each extra snapshot is cheap"
+        }
+
+        DotPicker {
+            options: [
+                { label: "1", value: 1 },
+                { label: "3", value: 3 },
+                { label: "5", value: 5 },
+                { label: "10", value: 10 },
+                { label: "All", value: 0 }
+            ]
+            current: Config.backupDiskKeep
+            onPicked: (v) => { Config.backupDiskKeep = v; Config.save(); }
+        }
+
+        SettingRow {
+            key: "backupDiskRun"
+            label: "Back up now"
+            hint: Backup.status !== "" ? Backup.status
+                : (Config.backupDiskDest === "" ? "Pick a backup disk first"
+                   : (!Backup.has(Config.backupDiskProfile)
+                      ? "Nothing to back up for this profile yet"
+                      : "A dated snapshot on the backup disk"))
+            RowLayout {
+                spacing: Theme.px(6)
+                NPillButton {
+                    text: "Estimate"
+                    visible: !Backup.running && Config.backupDiskDest !== ""
+                    onActivated: Backup.estimate()
+                }
+                NPillButton {
+                    text: Backup.running ? "…" : (page.backupArmed === "run" ? "Start" : "Back up")
+                    danger: page.backupArmed === "run"
+                    onActivated: {
+                        if (Backup.running || Config.backupDiskDest === "") return;
+                        if (page.backupArmed === "run") { page.backupArmed = ""; Backup.start(); return; }
+                        page.backupArmed = "run"; disarmBackup.restart();
+                    }
+                }
+            }
+        }
+
+        // The progress bar, only while a backup runs.
+        Rectangle {
+            Layout.fillWidth: true
+            visible: Backup.running
+            implicitHeight: Theme.px(6)
+            radius: height / 2
+            color: Theme.c.surface3
+            Rectangle {
+                height: parent.height
+                radius: height / 2
+                color: Theme.c.red
+                width: parent.width * Math.max(0, Backup.progress)
+                Behavior on width { NumberAnimation { duration: Theme.fast } }
+            }
+        }
+
+        // Existing snapshots on the disk.
+        Repeater {
+            model: Backup.snapshots.slice(0, 10)
+            SettingRow {
+                required property var modelData
+                label: page.snapshotLabel(modelData.name)
+                hint: Backup.human(modelData.bytes)
             }
         }
     }

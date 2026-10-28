@@ -1,0 +1,11 @@
+const fs=require("fs"),assert=require("assert");
+const src=fs.readFileSync(process.argv[2],"utf8");
+const human=new Function("bytes",src.match(/function human\(bytes: real\): string \{\n([\s\S]*?)\n    \}/)[1]);
+assert.strictEqual(human(0),"0 B"); assert.strictEqual(human(12345),"12 KB"); assert.strictEqual(human(5e9),"5.0 GB");
+const onRead=src.match(/onRead: \(chunk\) => \{\n([\s\S]*?)\n            \}/)[1];
+const fn=new Function("chunk","root",onRead);
+const root={progress:-1,lastSnapshot:""};
+fn("     1,234,567  45%   12MB/s",root); assert.strictEqual(root.progress,0.45,"45%");
+fn("  12,345  100%  0:00:00",root); assert.strictEqual(root.progress,1,"100%");
+fn("DONE 20261028-214814",root); assert.strictEqual(root.lastSnapshot,"20261028-214814","DONE name");
+console.log("backup-disk: size rounding, progress % and DONE name parsed");

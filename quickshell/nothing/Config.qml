@@ -131,6 +131,10 @@ Singleton {
     property alias displayGrace: a.displayGrace
     property alias autostartApps: a.autostartApps
     property alias autoBackup: a.autoBackup
+    property alias backupDiskProfile: a.backupDiskProfile
+    property alias backupDiskDest: a.backupDiskDest
+    property alias backupDiskKeep: a.backupDiskKeep
+    property alias backupDiskCustom: a.backupDiskCustom
     property alias autostartDelay: a.autostartDelay
 
     // ── Input ─────────────────────────────────────────────────────────
@@ -932,6 +936,10 @@ Singleton {
         a.barDrivesAdded = true;
         a.autostartApps = [];
         a.autoBackup = true;
+        a.backupDiskProfile = "session";
+        a.backupDiskDest = "";
+        a.backupDiskKeep = 5;
+        a.backupDiskCustom = [];
         a.autostartDelay = 3;
         a.displayGrace = 15;
         a.inputSensitivity = 0;
@@ -1306,6 +1314,13 @@ Singleton {
             property var    autostartApps: []
             // One copy of config.json a day, seven kept (ConfigBackup).
             property bool   autoBackup: true
+            // Settings > System > Disk backup (scripts/backup-disk.sh).
+            // What to back up, where to, how many snapshots to keep, and
+            // the folders for the "custom" profile.
+            property string backupDiskProfile: "session"
+            property string backupDiskDest: ""
+            property int    backupDiskKeep: 5
+            property var    backupDiskCustom: []
             property int    autostartDelay: 3
             // Seconds a display change waits for Keep before undoing itself.
             property int    displayGrace: 15

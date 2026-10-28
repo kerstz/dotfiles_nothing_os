@@ -103,11 +103,24 @@ lines kept); SUPER+W runs `scripts/open-default.sh web`, which uses that
 choice when you made one. `services/Drives.qml` re-reads `lsblk` on
 `udevadm monitor` block events, mounts newly plugged USB/SD partitions
 with `udisksctl` (never at login, never encrypted ones) and ejects by
-unmounting every partition then powering the disk off. Essential Search
+unmounting every partition then powering the disk off. A LUKS drive is
+unlocked by passing the passphrase on `udisksctl unlock`'s stdin (never
+in argv), then its cleartext child is mounted. Essential Search
 `~query` runs `fd` (or `plocate`) over `$HOME`. Settings > Processes
 (CTRL+SHIFT+Esc) samples `/proc` twice per refresh with
 `scripts/procs.py`, only while on screen, groups by program and sends
 TERM, then KILL on request, to your own processes only.
+
+**Disk backup.** Settings > System > Disk backup copies files to another
+disk through `scripts/backup-disk.sh` (rsync), driven by
+`services/Backup.qml`. A profile chooses what — `session` (the whole
+home, with caches and trashes left out), `config`, `documents`, or
+`custom` folders — and the destination is any disk you point it at; each
+run is a dated snapshot under `<dest>/Nothing-Backups/<profile>/`, with
+unchanged files hard-linked to the previous one (`--link-dest`) and old
+snapshots pruned to the newest N. A destination inside (or a parent of) a
+source is refused. An encrypted backup disk is unlocked in the same
+section through `Drives.unlock`.
 
 **Picture, evening level, app routes, daily backup.** A monitor card's
 "Picture" reads its DDC capabilities once and offers contrast (0x12),

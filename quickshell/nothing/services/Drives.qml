@@ -88,14 +88,22 @@ Singleton {
                         if (r && (t === "usb" || t === "mmc" || t === null || t === undefined)
                             && n.fstype && n.fstype !== "swap"
                             && (n.type === "part" || n.type === "disk")) {
+                            // A LUKS partition carries its unlocked filesystem
+                            // as a "crypt" child: once unlocked, that child is
+                            // what gets mounted, and locking closes it again.
+                            const enc = n.fstype === "crypto_LUKS";
+                            const clear = enc
+                                ? (n.children ?? []).find(c => c.type === "crypt") : null;
                             out.push({
                                 path: n.path,
                                 disk: n.pkname ? "/dev/" + n.pkname : n.path,
                                 label: n.label || n.path.split("/").pop(),
                                 size: root.human(Number(n.size) || 0),
                                 fstype: n.fstype,
-                                mount: n.mountpoint ?? "",
-                                encrypted: n.fstype === "crypto_LUKS"
+                                encrypted: enc,
+                                unlocked: enc && clear !== undefined && clear !== null,
+                                clear: clear ? clear.path : "",
+                                mount: enc ? (clear?.mountpoint ?? "") : (n.mountpoint ?? "")
                             });
                         }
                         walk(n.children, t, r);
@@ -117,8 +125,8 @@ Singleton {
             // The first read is what was there at login: listed, not mounted.
             if (!root.primed)
                 continue;
-            if (d.encrypted)
-                root.notify(d.label + " plugged in", "Encrypted: open it from the file manager to unlock it");
+            if (d.encrypted && !d.unlocked)
+                root.notify(d.label + " plugged in", "Encrypted — unlock it to use it");
             else if (d.mount === "" && Config.drivesAutomount)
                 root.mount(d.path);
             else
@@ -149,14 +157,87 @@ Singleton {
     function open(d: var): void {
         if (d.mount !== "")
             Quickshell.execDetached(["xdg-open", d.mount]);
-        else
+        else if (d.encrypted && d.unlocked && d.clear !== "")
+            root.mount(d.clear);
+        else if (!d.encrypted)
             root.mount(d.path);
+    }
+
+    // Unlock a LUKS drive and mount it. The passphrase is written to
+    // udisksctl's stdin (it reads it there when stdin is not a terminal),
+    // never put on the command line where ps would show it, and dropped as
+    // soon as it is sent. udisksctl's own polkit rule lets the logged-in
+    // user do this, so there is no sudo.
+    property string unlockFor: ""
+    property string unlockError: ""
+    function unlock(path: string, passphrase: string): void {
+        if (unlocker.running || passphrase === "")
+            return;
+        root.unlockFor = path;
+        root.unlockError = "";
+        unlocker.target = path;
+        unlocker.pass = passphrase;
+        unlocker.command = ["udisksctl", "unlock", "-b", path];
+        unlocker.stdinEnabled = true;   // so the passphrase can be written
+        unlocker.running = true;
+    }
+
+    NProcess {
+        id: unlocker
+        quiet: true
+        property string target: ""
+        property string pass: ""
+        stderr: StdioCollector { id: unlockErr }
+        onRunningChanged: {
+            if (running) {
+                write(unlocker.pass + "\n");
+                unlocker.pass = "";       // gone the moment it is sent
+                stdinEnabled = false;
+            }
+        }
+        onExited: (code) => {
+            root.unlockFor = "";
+            if (code !== 0) {
+                const why = (unlockErr.text.trim().split("\n").pop() || ("exit " + code))
+                    .replace(/^Error [^:]*: ?/, "");
+                root.unlockError = /pass|wrong|decrypt/i.test(why)
+                    ? "Wrong passphrase" : why;
+            } else {
+                // Mount the filesystem that unlocking just exposed.
+                root.refresh();
+                unlockSettle.restart();
+            }
+        }
+    }
+
+    // After an unlock the cleartext device appears a moment later; mount it
+    // once the list has caught up.
+    Timer {
+        id: unlockSettle
+        interval: 500
+        onTriggered: {
+            const d = root.list.find(x => x.path === unlocker.target);
+            if (d && d.unlocked && d.clear !== "" && d.mount === "")
+                root.mount(d.clear);
+        }
+    }
+
+    function lock(d: var): void {
+        if (!d.encrypted)
+            return;
+        // Unmount the open filesystem first, then close the LUKS device.
+        const script = '[ -n "$2" ] && udisksctl unmount -b "$2" --no-user-interaction 2>/dev/null; '
+                     + 'udisksctl lock -b "$1"';
+        root.run("lock", d.path, ["sh", "-c", script, "lock", d.path, d.clear]);
     }
 
     // Unmount every mounted partition of the same disk, then power the
     // disk off: once that answers, pulling the cable is safe.
     function eject(d: var): void {
-        const parts = root.list.filter(x => x.disk === d.disk && x.mount !== "").map(x => x.path);
+        // A mounted cleartext device unmounts by its own node; its LUKS
+        // parent is locked rather than unmounted.
+        const parts = root.list.filter(x => x.disk === d.disk && x.mount !== "")
+            .map(x => (x.encrypted && x.unlocked) ? x.clear : x.path);
         const script = 'for p in "$@"; do [ "$p" = -- ] && break; udisksctl unmount -b "$p" --no-user-interaction || exit 1; shift; done; shift; '
                      + 'udisksctl power-off -b "$1" --no-user-interaction';
         root.run("eject", d.disk, ["sh", "-c", script, "eject"].concat(parts, ["--", d.disk]));
@@ -197,6 +278,8 @@ Singleton {
                 Quickshell.execDetached(["notify-send", "-a", "Nothing", "-u", "critical",
                     (actor.kind === "eject" ? "Cannot eject " : "Cannot mount ") + name,
                     /busy/i.test(why) ? "Something still has a file open on it. Close it and try again." : why]);
+            } else if (actor.kind === "lock") {
+                root.notify(name + " locked", "The encrypted drive is closed");
             } else if (actor.kind === "eject") {
                 root.notify(name + " can be removed", "Unmounted and powered off");
             } else {

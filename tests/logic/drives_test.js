@@ -15,3 +15,13 @@ let got=null;const root={human,arrived:()=>{},set list(v){got=v;}};
 new Function("root","text",body)(root,JSON.stringify(sample));
 assert.deepStrictEqual(got.map(d=>[d.path,d.disk,d.label,d.size,d.encrypted]),[["/dev/sdb1","/dev/sdb","KEY","64 GB",false],["/dev/sdb2","/dev/sdb","sdb2","1.0 GB",true]]);
 console.log("drives: only the USB stick's partitions listed, internal SATA/NVMe/zram ignored");
+
+// Encrypted drive: locked (no crypt child) vs unlocked (crypt child mounted).
+const enc=(child)=>({blockdevices:[{path:"/dev/sdb",label:null,size:64e9,fstype:null,mountpoint:null,rm:true,hotplug:true,type:"disk",tran:"usb",pkname:null,children:[
+  Object.assign({path:"/dev/sdb1",label:"Backup",size:64e9,fstype:"crypto_LUKS",mountpoint:null,rm:true,hotplug:true,type:"part",tran:null,pkname:"sdb"}, child?{children:[child]}:{})]}]});
+let g=null; const r2={human,arrived:()=>{},set list(v){g=v;}};
+new Function("root","text",body)(r2, JSON.stringify(enc(null)));
+assert.deepStrictEqual([g[0].encrypted,g[0].unlocked,g[0].clear,g[0].mount],[true,false,"",""], "locked LUKS");
+new Function("root","text",body)(r2, JSON.stringify(enc({path:"/dev/dm-0",fstype:"ext4",mountpoint:"/run/media/me/Backup",type:"crypt"})));
+assert.deepStrictEqual([g[0].encrypted,g[0].unlocked,g[0].clear,g[0].mount],[true,true,"/dev/dm-0","/run/media/me/Backup"], "unlocked LUKS → clear child + mount");
+console.log("drives: LUKS locked/unlocked parsed (clear device + mountpoint)");
