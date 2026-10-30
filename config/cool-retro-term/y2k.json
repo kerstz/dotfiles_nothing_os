@@ -1,0 +1,4 @@
+{
+    "name": "Y2K Millennium",
+    "obj": "{\"backgroundColor\":\"#0a0016\",\"fontColor\":\"#39ff8a\",\"rasterization\":1,\"bloom\":0.58,\"motionBlur\":0.32,\"burnIn\":0.26,\"staticNoise\":0.12,\"screenCurvature\":0.22,\"glowingLine\":0.18,\"chromaColor\":0.38,\"saturationColor\":0.45,\"ambientLight\":0.20,\"contrast\":0.86,\"brightness\":0.52,\"flickering\":0.12,\"horizontalSync\":0.10,\"jitter\":0.16,\"rbgShift\":0.22,\"windowOpacity\":1.0,\"frameName\":\"ROUGH_BLACK_FRAME\",\"fontName\":\"PRO_FONT_SCALED\",\"fontWidth\":1.0,\"fontScaling\":1.0,\"blur\":0.0}"
+}

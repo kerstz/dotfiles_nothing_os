@@ -1,0 +1,108 @@
+/* Y2K theme for GTK 4 - silver 3D chrome, beveled buttons, flat corners. */
+
+@define-color y2k_face    #c3c7cb;
+@define-color y2k_face2   #d7dadd;
+@define-color y2k_hi      #ffffff;
+@define-color y2k_shadow  #808890;
+@define-color y2k_dark    #3b3b45;
+@define-color y2k_ink     #10101a;
+@define-color y2k_blue    #2d6cff;
+@define-color y2k_pink    #ff2d9b;
+
+@define-color theme_bg_color          @y2k_face;
+@define-color theme_base_color        #ffffff;
+@define-color theme_fg_color          @y2k_ink;
+@define-color theme_text_color        @y2k_ink;
+@define-color theme_selected_bg_color @y2k_blue;
+@define-color theme_selected_fg_color #ffffff;
+@define-color insensitive_fg_color    @y2k_shadow;
+@define-color borders                 @y2k_dark;
+@define-color accent_color            @y2k_blue;
+@define-color accent_bg_color         @y2k_blue;
+@define-color accent_fg_color         #ffffff;
+
+* {
+    border-radius: 0;
+    outline-color: @y2k_blue;
+}
+
+window, .background, dialog, popover, popover.background {
+    background-color: @y2k_face;
+    color: @y2k_ink;
+}
+
+headerbar, .titlebar {
+    background: linear-gradient(90deg, @y2k_pink, @y2k_blue);
+    color: #ffffff;
+    border-bottom: 2px solid @y2k_dark;
+    box-shadow: inset 1px 1px @y2k_hi;
+    min-height: 34px;
+}
+headerbar label, .titlebar label { color: #ffffff; font-weight: bold; }
+
+button {
+    background: @y2k_face;
+    color: @y2k_ink;
+    border-top: 2px solid @y2k_hi;
+    border-left: 2px solid @y2k_hi;
+    border-bottom: 2px solid @y2k_dark;
+    border-right: 2px solid @y2k_dark;
+    padding: 3px 10px;
+}
+button:hover { background: @y2k_face2; }
+button:active, button:checked {
+    background: @y2k_face;
+    border-top: 2px solid @y2k_dark;
+    border-left: 2px solid @y2k_dark;
+    border-bottom: 2px solid @y2k_hi;
+    border-right: 2px solid @y2k_hi;
+}
+
+entry, textview, .view, treeview {
+    background: #ffffff;
+    color: @y2k_ink;
+    border-top: 2px solid @y2k_shadow;
+    border-left: 2px solid @y2k_shadow;
+    border-bottom: 2px solid @y2k_hi;
+    border-right: 2px solid @y2k_hi;
+    padding: 2px 4px;
+}
+
+selection, *:selected {
+    background-color: @y2k_blue;
+    color: #ffffff;
+}
+
+scrollbar, scrollbar slider {
+    background: @y2k_face;
+    border: 1px solid @y2k_dark;
+    min-width: 14px;
+    min-height: 14px;
+}
+scrollbar slider {
+    border-top: 2px solid @y2k_hi;
+    border-left: 2px solid @y2k_hi;
+    border-bottom: 2px solid @y2k_dark;
+    border-right: 2px solid @y2k_dark;
+}
+
+progressbar progress, progressbar trough {
+    border-radius: 0;
+}
+progressbar progress { background-color: @y2k_blue; }
+
+menu, .menu, .context-menu {
+    background: @y2k_face;
+    border: 2px solid @y2k_dark;
+    box-shadow: inset 1px 1px @y2k_hi;
+}
+menuitem:hover, menuitem:selected {
+    background-color: @y2k_blue;
+    color: #ffffff;
+}
+
+tooltip {
+    background: #ffffe1;
+    color: @y2k_ink;
+    border: 1px solid @y2k_dark;
+}
