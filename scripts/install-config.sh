@@ -58,8 +58,8 @@ copy_tree() {
     echo "  $dest/"
 }
 
-echo "-> ~/.config/quickshell/nothing"
-copy_tree "$ROOT/quickshell/nothing" "$CONF/quickshell/nothing"
+echo "-> ~/.config/quickshell (all rices)"
+copy_tree "$ROOT/quickshell" "$CONF/quickshell"
 
 echo "-> ~/.config/scripts"
 copy_tree "$ROOT/scripts" "$CONF/scripts"
@@ -91,6 +91,16 @@ command -v gtk-update-icon-cache >/dev/null 2>&1 \
 
 echo "-> ~/.config/kitty"
 copy_tree "$ROOT/config/kitty" "$CONF/kitty"
+
+# per-rice terminals: foot (nocturne), cool-retro-term (y2k).
+if [[ -d "$ROOT/config/foot" ]]; then
+    echo "-> ~/.config/foot"
+    copy_tree "$ROOT/config/foot" "$CONF/foot"
+fi
+if [[ -d "$ROOT/config/cool-retro-term" ]]; then
+    echo "-> ~/.config/cool-retro-term"
+    copy_tree "$ROOT/config/cool-retro-term" "$CONF/cool-retro-term"
+fi
 
 echo "-> ~/.config/mpv"
 copy_tree "$ROOT/config/mpv" "$CONF/mpv"

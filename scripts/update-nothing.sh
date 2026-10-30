@@ -47,7 +47,7 @@ QS="$CONF/quickshell/nothing"
 # repo prefix -> installed prefix (the same places install-config.sh uses)
 map_dest() {
     case "$1" in
-        quickshell/nothing/*) echo "$QS/${1#quickshell/nothing/}" ;;
+        quickshell/*)         echo "$CONF/quickshell/${1#quickshell/}" ;;
         scripts/*)            echo "$CONF/scripts/${1#scripts/}" ;;
         hypr/hyprland/*)      echo "$CONF/hypr/hyprland/${1#hypr/hyprland/}" ;;
         hypr/wallpapers/*)    echo "$CONF/hypr/wallpapers/${1#hypr/wallpapers/}" ;;
@@ -77,14 +77,14 @@ while IFS= read -r -d '' f; do
         blob="$(git -C "$ROOT" hash-object -- "$dst")"
         known_blobs "$f" | grep -qx "$blob" || edited+=("$f")
     fi
-done < <(git -C "$ROOT" ls-files -z -- quickshell/nothing scripts hypr applications | sort -zu)
+done < <(git -C "$ROOT" ls-files -z -- quickshell scripts hypr applications | sort -zu)
 
 # Your own additions to the shell: not ours to touch, worth knowing about.
 extra=()
 while IFS= read -r -d '' x; do
-    rel="quickshell/nothing/${x#"$QS"/}"
+    rel="quickshell/${x#"$CONF/quickshell"/}"
     git -C "$ROOT" ls-files --error-unmatch -- "$rel" >/dev/null 2>&1 || extra+=("$rel")
-done < <(find "$QS" -type f -name '*.qml' -print0)
+done < <(find "$CONF/quickshell" -type f -name '*.qml' -print0)
 
 echo "Checkout: $ROOT ($(git -C "$ROOT" rev-parse --abbrev-ref HEAD) @ $(git -C "$ROOT" rev-parse --short HEAD))"
 echo "${#new[@]} new file(s), ${#changed[@]} changed file(s)."
