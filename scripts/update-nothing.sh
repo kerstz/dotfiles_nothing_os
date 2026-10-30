@@ -50,6 +50,7 @@ map_dest() {
         quickshell/*)         echo "$CONF/quickshell/${1#quickshell/}" ;;
         scripts/*)            echo "$CONF/scripts/${1#scripts/}" ;;
         hypr/hyprland/*)      echo "$CONF/hypr/hyprland/${1#hypr/hyprland/}" ;;
+        hypr/rices/*)         echo "$CONF/hypr/rices/${1#hypr/rices/}" ;;
         hypr/wallpapers/*)    echo "$CONF/hypr/wallpapers/${1#hypr/wallpapers/}" ;;
         hypr/hyprland.lua|hypr/hypridle.conf|hypr/lockstatus.sh|hypr/passthrough.lua|hypr/wallpaper.png)
                               echo "$CONF/hypr/${1#hypr/}" ;;
