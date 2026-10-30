@@ -1,0 +1,116 @@
+/* Nocturne theme for GTK 3 - dark violet, cold, glacial, icy accent. */
+
+@define-color noc_bg        #0e0a1e;
+@define-color noc_bg_alt    #161130;
+@define-color noc_bg_hover  #211a44;
+@define-color noc_fg        #e9e4ff;
+@define-color noc_fg_dim    #a79cd6;
+@define-color noc_accent    #b69cff;
+@define-color noc_accent_fg #0a0718;
+@define-color noc_outline   #352c63;
+
+@define-color theme_bg_color          @noc_bg;
+@define-color theme_base_color        @noc_bg;
+@define-color theme_fg_color          @noc_fg;
+@define-color theme_text_color        @noc_fg;
+@define-color theme_selected_bg_color @noc_accent;
+@define-color theme_selected_fg_color @noc_accent_fg;
+@define-color insensitive_fg_color    @noc_fg_dim;
+@define-color borders                 @noc_outline;
+@define-color accent_color            @noc_accent;
+@define-color accent_bg_color         @noc_accent;
+@define-color accent_fg_color         @noc_accent_fg;
+
+window, .background, dialog, popover, popover.background {
+    background-color: @noc_bg;
+    color: @noc_fg;
+}
+
+headerbar, .titlebar {
+    background: @noc_bg;
+    color: @noc_fg;
+    border-bottom: 1px solid @noc_outline;
+    box-shadow: none;
+    min-height: 38px;
+}
+
+button {
+    background: @noc_bg_alt;
+    color: @noc_fg;
+    border: none;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 5px 12px;
+}
+button:hover  { background: @noc_bg_hover; }
+button:active,
+button:checked { background: @noc_accent; color: @noc_accent_fg; }
+button.flat   { background: transparent; }
+
+entry, spinbutton, textview {
+    background: @noc_bg_alt;
+    color: @noc_fg;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    padding: 5px 9px;
+}
+entry:focus { border-color: @noc_accent; }
+
+list, treeview, .view {
+    background-color: @noc_bg;
+    color: @noc_fg;
+}
+row:selected, :selected, treeview.view:selected {
+    background-color: @noc_accent;
+    color: @noc_accent_fg;
+}
+row:hover { background-color: @noc_bg_hover; }
+
+.sidebar, placessidebar, stacksidebar {
+    background-color: @noc_bg;
+    border-right: 1px solid @noc_outline;
+}
+
+scrollbar { background: transparent; border: none; }
+scrollbar slider {
+    background: @noc_outline;
+    border-radius: 999px;
+    min-width: 5px;
+    min-height: 5px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
+scrollbar slider:hover { background: @noc_fg_dim; }
+
+menu, .menu, .context-menu, popover contents {
+    background-color: @noc_bg_alt;
+    border: 1px solid @noc_outline;
+    border-radius: 14px;
+    padding: 4px;
+}
+menuitem { border-radius: 9px; padding: 5px 10px; }
+menuitem:hover { background-color: @noc_accent; color: @noc_accent_fg; }
+
+notebook > header      { background: @noc_bg; border-color: @noc_outline; }
+notebook > header tab  { color: @noc_fg_dim; border: none; }
+notebook > header tab:checked {
+    color: @noc_fg;
+    box-shadow: inset 0 -2px @noc_accent;
+}
+
+switch        { background: @noc_bg_hover; border-radius: 999px; border: none; }
+switch:checked{ background: @noc_accent; }
+switch slider { background: @noc_fg; border-radius: 999px; border: none; }
+
+progressbar progress, scale highlight { background: @noc_accent; border-radius: 999px; }
+scale trough  { background: @noc_bg_hover; border-radius: 999px; }
+scale slider  { background: @noc_fg; border-radius: 999px; }
+
+tooltip, tooltip.background {
+    background-color: @noc_bg_alt;
+    color: @noc_fg;
+    border: 1px solid @noc_outline;
+    border-radius: 9px;
+}
+
+selection { background-color: @noc_accent; color: @noc_accent_fg; }
