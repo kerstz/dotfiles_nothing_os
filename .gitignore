@@ -23,3 +23,6 @@ __pycache__/
 # screenshots you drop in while writing the README
 /exemple*.png
 /tmp/
+
+# Claude Code worktrees and agent scratch
+.claude/
