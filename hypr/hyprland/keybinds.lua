@@ -50,6 +50,8 @@ hl.bind(mainMod .. " + Escape",     ipc("session", "toggle"))
 -- restart cannot work: the pattern also matches the sh that holds the
 -- command, which is killed before it can relaunch anything.
 hl.bind("CTRL + " .. mainMod .. " + R", ipc("shell", "reload"))
+-- cycle the rice (shell + hypr overrides). R for rice; SUPER+ALT+R is free.
+hl.bind(mainMod .. " + ALT + R", hl.dsp.exec_cmd(ROOT .. "/scripts/rice.sh next"))
 
 --## Session
 -- Through the wrapper, which asks the shell to lock: it is what

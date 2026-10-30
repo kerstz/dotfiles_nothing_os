@@ -27,7 +27,28 @@ else
     ROOT = os.getenv("NOTHING_ROOT") or parent
 end
 assert(ROOT, "could not locate the rice root; set NOTHING_ROOT")
-shellDir = ROOT .. "/quickshell/nothing"
+
+-- active rice name, written by scripts/rice.sh; absent/empty => "nothing".
+local function readRice()
+    local stateHome = os.getenv("XDG_STATE_HOME")
+    if not stateHome or stateHome == "" then
+        stateHome = (os.getenv("HOME") or "") .. "/.local/state"
+    end
+    local fh = io.open(stateHome .. "/nothing/rice")
+    if not fh then return "nothing" end
+    local name = fh:read("*l")
+    fh:close()
+    if not name then return "nothing" end
+    name = name:gsub("%s+", "")
+    return name ~= "" and name or "nothing"
+end
+
+local activeRice = readRice()
+-- fall back if the named shell is missing, so a stale file never leaves no shell.
+if not fileExists(ROOT .. "/quickshell/" .. activeRice .. "/shell.qml") then
+    activeRice = "nothing"
+end
+shellDir = ROOT .. "/quickshell/" .. activeRice
 
 require("hyprland.variables")
 -- Registers lua:essential. Before general, which is where a layout is
@@ -46,6 +67,9 @@ local function loadLua(path)
     dofile(path)
     return true
 end
+
+-- rice overrides, after the base config but before custom.lua/local.lua.
+loadLua(HYPR_DIR .. "/rices/" .. activeRice .. ".lua")
 
 local hyprConf = (os.getenv("HOME") or "") .. "/.config/hypr"
 if not loadLua(hyprConf .. "/custom.lua") then
