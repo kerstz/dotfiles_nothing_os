@@ -72,3 +72,12 @@ hl.animation({ leaf = "workspacesOut", enabled = true, speed = 5.0, bezier = "y2
 -- cool-retro-term carries the CRT immersion best; fall back to a normal
 -- terminal so the Return bind still opens something if it is not installed.
 terminal = firstAvailable({ "cool-retro-term", "kitty", "foot", "alacritty", "ghostty", "wezterm" }, "xterm")
+
+-- keybinds.lua froze the terminal keys to the base terminal before this
+-- file loaded; point them at the one resolved above.
+hl.unbind(mainMod .. " + Return")
+hl.unbind(mainMod .. " + T")
+hl.unbind("CTRL + ALT + T")
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd(terminal))
+hl.bind("CTRL + ALT + T",       hl.dsp.exec_cmd(terminal))

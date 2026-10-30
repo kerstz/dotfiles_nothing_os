@@ -11,6 +11,15 @@ BG       = "rgba(06040fff)"
 
 terminal = "foot"
 
+-- keybinds.lua froze the terminal keys to the base terminal before this
+-- file loaded; point them at foot.
+hl.unbind(mainMod .. " + Return")
+hl.unbind(mainMod .. " + T")
+hl.unbind("CTRL + ALT + T")
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + T",      hl.dsp.exec_cmd(terminal))
+hl.bind("CTRL + ALT + T",       hl.dsp.exec_cmd(terminal))
+
 hl.config({
     general = {
         -- Glacial breathing room: wider than nothing's dense grid.
