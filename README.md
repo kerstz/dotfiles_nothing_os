@@ -233,6 +233,7 @@ Settings live in `~/.config/nothing/config.json`.
 | `SUPER+SHIFT+T` | wallpaper picker: your pictures, per screen, crop/fit, slideshow |
 | `SUPER+ALT+W` | next wallpaper from the folder |
 | `SUPER+SHIFT+G` | next Glyph surface |
+| `SUPER+ALT+R` | cycle rice (shell + hypr look) |
 | `SUPER+G` | game bar |
 | `SUPER+V` / `SUPER+.` | clipboard / emoji |
 | `SUPER+SHIFT+S` | region capture |

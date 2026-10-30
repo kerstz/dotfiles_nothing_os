@@ -19,6 +19,7 @@ hypr/hypridle.conf             idle / sleep
 hypr/lockstatus.sh             lock-screen status line
 hypr/custom.lua.example        sample binds -> ~/.config/hypr/custom.lua
 hypr/passthrough.lua           keyboard passthrough for the nested session
+hypr/rices/<name>.lua          per-rice Hyprland overrides (nothing.lua is a stub)
 hypr/local.lua                 fallback if ~/.config/hypr/local.lua is missing
 quickshell/nothing/
   shell.qml                    entry point
@@ -38,6 +39,7 @@ scripts/essential-app.py       Essential Apps: generate, validate, store
 scripts/dot-wallpaper.py       any picture -> a dot-matrix wallpaper
 scripts/make-fetch-logos.sh    rebuild the fastfetch dot logos
 scripts/fetch-logo.sh          pick or alternate the fastfetch logo
+scripts/rice.sh                rice switcher (list / current / set / next)
 theme/                         Dolphin / GTK / portal / icon seeds
 config/                        kitty, fish, starship, fastfetch, mpv, fontconfig
 install                        public installer
@@ -52,6 +54,23 @@ symlinks). Previous files are kept as `*.bak-<stamp>`. `custom.lua`
 and an existing `fish/config.fish` are created once and never
 overwritten; `fish/conf.d/nothing.fish` is refreshed. Re-run
 `./install --files` after pulling.
+
+**Rices.** A rice is one look: a Quickshell shell under
+`quickshell/<name>/` (its `shell.qml`) plus an optional
+`hypr/rices/<name>.lua` loaded after the base Hyprland config and before
+`custom.lua`, which may restyle palette, gaps, borders, animations, window
+rules and the terminal. The active name lives in
+`${XDG_STATE_HOME:-~/.local/state}/nothing/rice`; absent or empty means the
+default, `nothing`. `hypr/hyprland.lua` reads that file to set `shellDir`
+(so `execs.lua` launches `qs -p <active shell>`) and to load the overrides,
+falling back to `nothing` when the named shell is missing, so a stale file
+never leaves the session with no shell. `scripts/rice.sh` is the switcher:
+`list` (dirs under `quickshell/` carrying a `shell.qml`), `current`, `set
+<name>`, `next` (cycle). `set`/`next` write the state file first, then apply
+live — kill `quickshell`, relaunch it on the new shell, `hyprctl reload` for
+the overrides — and degrade to a plain write ("applies on next login") when
+run outside a session. SUPER+ALT+R cycles. `nothing`'s override file is a
+baseline no-op; the base config already is the Nothing look.
 
 **Light (SUPER+P, second page).** Three controls that all look like
 brightness and are kept apart on purpose. `services/Ddc.qml` drives each

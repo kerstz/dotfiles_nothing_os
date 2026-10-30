@@ -14,3 +14,5 @@ node backup_test.js    "$S/ConfigBackup.qml"
 node phone_test.js     "$S/Phone.qml"
 node wallpaper_test.js "$S/Wallpapers.qml"
 node backup_disk_test.js "$S/Backup.qml"
+# switcher is a shell script, not QML: pass the script instead of a service.
+node rice_test.js        ../../scripts/rice.sh
