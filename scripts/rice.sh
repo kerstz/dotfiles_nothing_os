@@ -72,15 +72,16 @@ apply_gtk() {
 # relaunch the shell for a rice. returns 0 if it is still alive after.
 launch_shell() {
     local name="$1" n=0
-    pkill -x quickshell 2>/dev/null || true
+    # the process runs as "qs" (comm), though its exe is quickshell; match qs.
+    pkill -x qs 2>/dev/null || true
     # wait for the old shell to release its socket, not a blind sleep.
-    while pgrep -x quickshell >/dev/null 2>&1 && (( n < 20 )); do
+    while pgrep -x qs >/dev/null 2>&1 && (( n < 20 )); do
         sleep 0.1; n=$(( n + 1 ))
     done
     setsid qs -p "$ROOT/quickshell/$name" >/dev/null 2>&1 &
     # a broken shell.qml exits at once; give it a beat, then check it survived.
     sleep 0.6
-    pgrep -x quickshell >/dev/null 2>&1
+    pgrep -x qs >/dev/null 2>&1
 }
 
 apply() {
