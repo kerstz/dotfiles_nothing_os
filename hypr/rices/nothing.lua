@@ -1,0 +1,10 @@
+-- rice overrides for "nothing" (default). loaded by hypr/hyprland.lua after
+-- the base config, before custom.lua. no-op: the base config is already the
+-- Nothing look. a rice override runs with the module globals and may set:
+--   RED = "rgba(d71921ff)"                       -- palette (shared w/ shell)
+--   hl.config({ general = { gaps_in = 4, border_size = 2 } })
+--   hl.config({ decoration = { rounding = 12 } })
+--   hl.config({ animations = { enabled = true } })
+--   hl.windowrule("opacity 0.95", "class:^(kitty)$")
+--   terminal = "kitty"                           -- terminal the binds use
+-- the shell lives in quickshell/<name>/; this file is only the hypr side.
