@@ -243,5 +243,5 @@ PanelWindow {
         }
     }
 
-    onOpenChanged: if (open) { search.text = GlobalState.startQuery; search.forceActiveFocus(); }
+    onOpenChanged: if (open) { win.query = GlobalState.startQuery; search.forceActiveFocus(); }
 }

@@ -52,6 +52,12 @@ Singleton {
     function restoreMinimised(): void {
         Hyprland.dispatch(`hl.dsp.workspace.toggle_special("min")`);
     }
+    // Pull one window back from special:min onto the current workspace.
+    function restore(addr: string): void {
+        if (!addr) return;
+        Hyprland.dispatch(
+            `hl.dsp.window.move({ window = "address:${addr}", workspace = "e+0", follow = true })`);
+    }
 
     Timer {
         id: refresh

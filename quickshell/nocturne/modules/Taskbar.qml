@@ -128,6 +128,7 @@ PanelWindow {
                     showLabel: true
                     onLeftClick: {
                         if (active) Windows.minimise(addr);
+                        else if (modelData.workspace?.name === "special:min") Windows.restore(addr);
                         else Windows.focus(addr);
                     }
                     onCloseClick: Windows.close(addr)
