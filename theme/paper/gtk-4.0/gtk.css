@@ -1,0 +1,49 @@
+@define-color theme_bg_color #e8ddcc;
+@define-color theme_fg_color #222224;
+@define-color theme_base_color #efe5d5;
+@define-color theme_text_color #222224;
+@define-color theme_selected_bg_color #bccde3;
+@define-color theme_selected_fg_color #222224;
+@define-color insensitive_fg_color #8b8376;
+@define-color borders #c9bca6;
+
+* {
+    font-family: "Gaegu", sans-serif;
+}
+
+window, .background, dialog {
+    background-color: #e8ddcc;
+    color: #222224;
+}
+
+headerbar, .titlebar {
+    background-color: #ddd0ba;
+    background-image: none;
+    color: #222224;
+    border-bottom: 1px solid #c9bca6;
+    box-shadow: none;
+}
+
+entry, textview text, .view {
+    background-color: #efe5d5;
+    color: #222224;
+    border-color: #c9bca6;
+}
+
+button {
+    background-color: #ddd0ba;
+    background-image: none;
+    color: #222224;
+    border: 1px solid #4a4641;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+button:hover {
+    background-color: #bccde3;
+}
+
+selection, .view:selected, row:selected {
+    background-color: #bccde3;
+    color: #222224;
+}

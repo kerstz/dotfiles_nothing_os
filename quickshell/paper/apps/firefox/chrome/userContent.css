@@ -1,0 +1,313 @@
+@import url("generated.css");
+@import url("images.css");
+
+@-moz-document url("about:home"), url("about:newtab"), url("about:privatebrowsing") {
+    :root {
+        --vu: min(calc(100vh / 209), calc(100vw / 330), calc(var(--pu) * 1.15));
+        --newtab-background-color: transparent !important;
+        --newtab-background-color-secondary: transparent !important;
+        --newtab-text-primary-color: #2a2926 !important;
+        --newtab-wallpaper-color: transparent !important;
+        background: transparent !important;
+        scrollbar-width: none !important;
+    }
+
+    html, body, .outer-wrapper, main, #root, .body-wrapper, .non-collapsible-section, .activity-stream, .wallpaper-input {
+        background: transparent !important;
+        background-color: transparent !important;
+        font-family: "Gaegu", cursive !important;
+    }
+
+    html, body {
+        overflow: hidden !important;
+        height: 100vh !important;
+    }
+
+    #root::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image:
+            var(--img-tape_gray),
+            var(--img-leaf),
+            var(--img-smile),
+            var(--img-town),
+            var(--img-tape_pink) !important;
+        background-repeat: no-repeat !important;
+        background-size:
+            calc(var(--vu) * 48) calc(var(--vu) * 58),
+            calc(var(--vu) * 31) auto,
+            calc(var(--vu) * 24) auto,
+            calc(var(--vu) * 152) auto,
+            calc(var(--vu) * 37) calc(var(--vu) * 13) !important;
+        background-position:
+            calc(var(--vu) * 18) calc(var(--vu) * 17),
+            calc(var(--vu) * 9) calc(var(--vu) * 133),
+            calc(var(--vu) * 63) calc(var(--vu) * 158),
+            calc(100% - var(--vu) * 8) calc(100% - var(--vu) * 5),
+            calc(100% - var(--vu) * 33) calc(var(--vu) * 10) !important;
+    }
+
+    body::before {
+        content: var(--greeting);
+        position: fixed;
+        left: calc(50% + var(--vu) * 24);
+        top: calc(var(--vu) * 21);
+        transform: translateX(-50%);
+        padding-right: calc(var(--vu) * 50);
+        background: var(--img-sun) right center / calc(var(--vu) * 42) no-repeat;
+        font-family: "Shadows Into Light Two", cursive !important;
+        font-size: calc(var(--vu) * 37);
+        line-height: 1.2;
+        color: #232325;
+        white-space: nowrap;
+        letter-spacing: calc(var(--vu) * 0.8);
+    }
+
+    body::after {
+        content: "Better\A   Software\A  A Happier\A       Me";
+        position: fixed;
+        left: calc(var(--vu) * 34);
+        top: calc(var(--vu) * 80);
+        white-space: pre;
+        font-family: "Shadows Into Light Two", cursive !important;
+        font-size: calc(var(--vu) * 15.5);
+        line-height: 1.34;
+        color: #4a4641;
+        transform: rotate(-11deg);
+        transform-origin: top left;
+        letter-spacing: calc(var(--vu) * 0.3);
+    }
+
+    .outer-wrapper::before {
+        content: "Things to Remember:\A\2013  Stay Consistent\A\2013  Keep Learning\A\2013  Build Cool Stuff\A\2013  Be Kind :)";
+        position: fixed;
+        left: calc(100vw - var(--vu) * 134);
+        top: calc(var(--vu) * 25);
+        white-space: pre;
+        font-family: "Gaegu", cursive !important;
+        font-size: calc(var(--vu) * 14);
+        line-height: 1.2;
+        color: #4a4641;
+        transform: rotate(-2.5deg);
+        z-index: 2;
+    }
+
+    .outer-wrapper::after {
+        content: "";
+        position: fixed;
+        right: calc(var(--vu) * -10);
+        top: calc(var(--vu) * 5);
+        width: calc(var(--vu) * 185);
+        height: calc(100vh + var(--vu) * 10);
+        background: var(--img-card_note) center / 100% 100% no-repeat;
+        opacity: 0.72;
+        z-index: -2;
+    }
+
+    .logo-and-wordmark-wrapper, .logo-and-wordmark, .personalize-button, .weather, .customize-menu, .ds-layout, .discovery-stream,
+    footer, .asrouter-admin, .top-sites-list-wrapper > .section-title, .home-section-title,
+    .message-wrapper, .notification-wrapper, .wallpaper-attribution, .sponsored-label, .card-context, .ds-navigation, .privacy-notice, .download-modal,
+    .context-menu-button, .top-site-outer .context-menu, .search-handoff-button .fake-caret {
+        display: none !important;
+    }
+
+    .search-wrapper {
+        position: fixed !important;
+        left: 50% !important;
+        top: calc(var(--vu) * 81) !important;
+        transform: translateX(-50%) !important;
+        width: calc(var(--vu) * 329) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        z-index: 3;
+    }
+
+    .search-wrapper .search-inner-wrapper {
+        width: 100% !important;
+        height: calc(var(--vu) * 28) !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+    }
+
+    .search-wrapper .search-inner-wrapper moz-urlbar {
+        --urlbar-height: calc(var(--vu) * 28) !important;
+        --urlbar-container-height: calc(var(--vu) * 28) !important;
+        background: transparent !important;
+    }
+
+    .search-wrapper .search-inner-wrapper::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 1px solid #8f8574;
+        border-radius: calc(var(--vu) * 14);
+        background: rgba(241, 233, 219, 0.5);
+        pointer-events: none;
+    }
+
+    .search-wrapper .search-inner-wrapper::after {
+        content: "";
+        position: absolute;
+        left: calc(var(--vu) * 4);
+        top: calc(var(--vu) * 3);
+        width: calc(var(--vu) * 24);
+        height: calc(var(--vu) * 22);
+        border-radius: 50%;
+        background: #ece2d2 var(--img-search) center / calc(var(--vu) * 12) no-repeat;
+        pointer-events: none;
+        z-index: 4;
+    }
+
+    .top-sites {
+        position: fixed !important;
+        left: 50% !important;
+        top: calc(var(--vu) * 125) !important;
+        transform: translateX(-50%) !important;
+        width: calc(var(--vu) * 400) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .top-sites-list {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        gap: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .top-sites-list > li, .top-site-outer {
+        width: calc(var(--vu) * 76) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    .top-site-outer .top-site-inner, .top-site-outer .top-site-button {
+        background: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .top-site-outer .tile {
+        width: calc(var(--vu) * 32) !important;
+        height: calc(var(--vu) * 32) !important;
+        margin: 0 auto !important;
+        background: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    .top-site-outer .tile .icon-wrapper, .top-site-outer .rich-icon, .top-site-outer .default-icon, .top-site-outer .screenshot, .top-site-outer .top-site-icon {
+        background-color: transparent !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        box-shadow: none !important;
+        border: none !important;
+        color: transparent !important;
+        font-size: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        inset: 0 !important;
+    }
+
+    .top-site-outer .tile .icon-stack {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .top-site-outer .tile .icon-wrapper {
+        border-radius: 0 !important;
+        overflow: visible !important;
+    }
+
+    .top-site-button:is([title*="YouTube"], [data-l10n-args*="YouTube"]) .tile .icon-wrapper { background-image: var(--img-youtube) !important; }
+    .top-site-button:is([title*="YouTube"], [data-l10n-args*="YouTube"]) .tile .icon-wrapper > * { display: none !important; }
+    .top-site-button:is([title*="GitHub"], [data-l10n-args*="GitHub"]) .tile .icon-wrapper { background-image: var(--img-github) !important; }
+    .top-site-button:is([title*="GitHub"], [data-l10n-args*="GitHub"]) .tile .icon-wrapper > * { display: none !important; }
+    .top-site-button:is([title*="Reddit"], [data-l10n-args*="Reddit"]) .tile .icon-wrapper { background-image: var(--img-reddit) !important; }
+    .top-site-button:is([title*="Reddit"], [data-l10n-args*="Reddit"]) .tile .icon-wrapper > * { display: none !important; }
+    .top-site-button:is([title*="Arch Wiki"], [data-l10n-args*="Arch Wiki"]) .tile .icon-wrapper { background-image: var(--img-arch) !important; }
+    .top-site-button:is([title*="Arch Wiki"], [data-l10n-args*="Arch Wiki"]) .tile .icon-wrapper > * { display: none !important; }
+
+    .top-sites-list > .top-site-outer:nth-child(n+5):not(.add-button-tile) {
+        display: none !important;
+    }
+
+    .top-site-outer .icon-pin-small, .add-button-hidden {
+        display: none !important;
+    }
+
+    .top-site-outer.add-button-tile {
+        position: relative !important;
+        display: block !important;
+        height: calc(var(--vu) * 60) !important;
+        background: var(--img-add_circle) center top / calc(var(--vu) * 30) no-repeat !important;
+    }
+
+    .top-site-outer.add-button-tile::after {
+        content: "Add";
+        display: block;
+        position: absolute;
+        top: calc(var(--vu) * 36);
+        width: 100%;
+        text-align: center;
+        font-family: "Gaegu", cursive !important;
+        font-size: calc(var(--vu) * 14);
+        color: #3a3734;
+    }
+
+    .top-site-outer.add-button-tile .add-button {
+        opacity: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        height: calc(var(--vu) * 34) !important;
+    }
+
+    .top-site-outer .title {
+        margin-top: calc(var(--vu) * 5) !important;
+        padding: 0 !important;
+        height: auto !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        display: block !important;
+        font-family: "Gaegu", cursive !important;
+        font-size: calc(var(--vu) * 13.5) !important;
+        line-height: 1.1 !important;
+        color: #3a3734 !important;
+        text-align: center !important;
+        letter-spacing: calc(var(--vu) * 0.3) !important;
+    }
+
+    .top-site-outer .title span:not(.sponsored-label), .top-site-outer .title-label {
+        font-family: "Gaegu", cursive !important;
+        font-size: calc(var(--vu) * 13.5) !important;
+        color: #3a3734 !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        -webkit-line-clamp: unset !important;
+        display: inline !important;
+    }
+
+    .top-site-outer .title .sponsored-label, .top-site-outer .sponsored-label {
+        display: none !important;
+    }
+
+    .top-site-outer .sponsored-label {
+        display: none !important;
+    }
+
+    @media (max-aspect-ratio: 5/2) {
+        #root::before, body::after, .outer-wrapper::before, .outer-wrapper::after {
+            display: none !important;
+        }
+    }
+}

@@ -1,0 +1,355 @@
+@import url("generated.css");
+
+:root {
+    --paper: #e8ddcc;
+    --paper-dark: #dcd1c0;
+    --paper-tab: #ecdfce;
+    --ink: #222224;
+    --ink-soft: #4a4641;
+    --line: #c7baa4;
+    --toolbar-bgcolor: transparent !important;
+    --toolbar-color: var(--ink) !important;
+    --toolbox-non-lwt-bgcolor: transparent !important;
+    --toolbox-bgcolor: transparent !important;
+    --lwt-accent-color: transparent !important;
+    --tab-selected-bgcolor: var(--paper-tab) !important;
+    --tab-selected-textcolor: var(--ink) !important;
+    --chrome-content-separator-color: var(--line) !important;
+    --tabpanel-background-color: transparent !important;
+    --toolbarbutton-border-radius: 4px !important;
+    --urlbar-box-bgcolor: transparent !important;
+    --toolbar-field-background-color: transparent !important;
+    --toolbar-field-focus-background-color: var(--paper-tab) !important;
+    --toolbar-field-color: var(--ink) !important;
+    --toolbar-field-focus-color: var(--ink) !important;
+    --tab-min-height: calc(var(--pu) * 25) !important;
+    --tab-block-margin: 0 !important;
+    --tab-border-radius: calc(var(--pu) * 4) !important;
+    font-family: "Gaegu", cursive !important;
+    background: transparent !important;
+    appearance: none !important;
+}
+
+:root, #main-window, body, #browser, #tabbrowser-tabbox, #tabbrowser-tabpanels, .browserContainer, .browserStack, #appcontent, #sidebar-main, browser {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+* {
+    font-family: "Gaegu", cursive !important;
+}
+
+#navigator-toolbox {
+    background: transparent !important;
+    border-bottom: 1px solid var(--line) !important;
+    appearance: none !important;
+}
+
+#titlebar, #TabsToolbar {
+    background: var(--paper-dark) !important;
+    background-color: rgba(205, 192, 172, 0.42) !important;
+    appearance: none !important;
+    border-top-left-radius: calc(var(--pu) * 4);
+    border-top-right-radius: calc(var(--pu) * 4);
+    border-bottom: 1px solid var(--line) !important;
+    min-height: calc(var(--pu) * 28) !important;
+}
+
+#nav-bar {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-block: calc(var(--pu) * 2) !important;
+    padding-inline: calc(var(--pu) * 8) calc(var(--pu) * 6) !important;
+    min-height: calc(var(--pu) * 31) !important;
+}
+
+.titlebar-spacer {
+    display: none !important;
+}
+
+.titlebar-buttonbox-container {
+    order: -1 !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-inline: calc(var(--pu) * 13) calc(var(--pu) * 6) !important;
+}
+
+#nav-bar .titlebar-buttonbox-container, #toolbar-menubar .titlebar-buttonbox-container {
+    display: none !important;
+}
+
+.titlebar-buttonbox {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: calc(var(--pu) * 6) !important;
+    appearance: none !important;
+}
+
+.titlebar-button {
+    appearance: none !important;
+    width: calc(var(--pu) * 10.5) !important;
+    height: calc(var(--pu) * 10.5) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+.titlebar-button > .toolbarbutton-icon {
+    display: none !important;
+}
+
+.titlebar-close {
+    order: 1 !important;
+    background: #e35951 !important;
+}
+
+.titlebar-min {
+    order: 2 !important;
+    background: #f3b138 !important;
+}
+
+.titlebar-max, .titlebar-restore {
+    order: 3 !important;
+    background: #6dbd3d !important;
+}
+
+#tabbrowser-tabs {
+    border-inline-start: none !important;
+    padding-inline-start: 0 !important;
+    --tab-overflow-pinned-tabs-width: 0 !important;
+}
+
+.tabbrowser-tab {
+    padding-inline: 0 !important;
+    min-height: calc(var(--pu) * 28) !important;
+    max-width: calc(var(--pu) * 142) !important;
+    min-width: calc(var(--pu) * 80) !important;
+    color: var(--ink-soft) !important;
+}
+
+.tab-background {
+    margin-block: calc(var(--pu) * 2) 0 !important;
+    border-radius: calc(var(--pu) * 5) calc(var(--pu) * 5) 0 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+}
+
+.tabbrowser-tab[selected] .tab-background {
+    background: var(--paper-tab) !important;
+    border-color: var(--line) !important;
+}
+
+.tab-label {
+    font-size: calc(var(--pu) * 15) !important;
+    color: var(--ink) !important;
+    line-height: 1.1 !important;
+}
+
+.tab-content {
+    padding-inline: calc(var(--pu) * 9) calc(var(--pu) * 6) !important;
+}
+
+.tab-icon-image {
+    width: calc(var(--pu) * 13) !important;
+    height: calc(var(--pu) * 13) !important;
+}
+
+.tab-icon-image:not([src]), .tab-icon-image[src^="chrome://branding"], .tabbrowser-tab[label="New Tab"] .tab-icon-image {
+    content: url("img/favcat.png") !important;
+    display: block !important;
+}
+
+#tabbrowser-tabs .tab-icon-stack {
+    display: block !important;
+}
+
+.tab-close-button {
+    list-style-image: url("img/close.png") !important;
+    width: calc(var(--pu) * 16) !important;
+    height: calc(var(--pu) * 16) !important;
+    padding: calc(var(--pu) * 3.5) !important;
+    fill-opacity: 1 !important;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.tab-close-button > .toolbarbutton-icon, .tab-close-button image {
+    width: calc(var(--pu) * 9) !important;
+    height: calc(var(--pu) * 9) !important;
+}
+
+#tabs-newtab-button, #new-tab-button {
+    list-style-image: url("img/plus.png") !important;
+}
+
+#tabs-newtab-button .toolbarbutton-icon, #new-tab-button .toolbarbutton-icon {
+    width: calc(var(--pu) * 20) !important;
+    height: calc(var(--pu) * 20) !important;
+    padding: calc(var(--pu) * 4) !important;
+    background: none !important;
+}
+
+toolbar .toolbarbutton-1 > .toolbarbutton-icon, #PanelUI-menu-button .toolbarbutton-icon, #PanelUI-menu-button .toolbarbutton-badge-stack {
+    width: calc(var(--pu) * 24) !important;
+    height: calc(var(--pu) * 24) !important;
+    padding: calc(var(--pu) * 3.5) !important;
+    fill: var(--ink) !important;
+}
+
+#nav-bar .toolbarbutton-1 {
+    --toolbarbutton-inner-padding: calc(var(--pu) * 4) !important;
+    margin-inline: calc(var(--pu) * 4) !important;
+}
+
+#back-button { list-style-image: url("img/back.png") !important; }
+#forward-button { list-style-image: url("img/forward.png") !important; }
+#reload-button, #stop-button { list-style-image: url("img/reload.png") !important; }
+#PanelUI-menu-button { list-style-image: url("img/menu.png") !important; }
+
+#forward-button[disabled], #back-button[disabled] {
+    opacity: 1 !important;
+}
+
+#back-button > .toolbarbutton-icon, #forward-button > .toolbarbutton-icon {
+    opacity: 1 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#urlbar-container {
+    --urlbar-container-height: calc(var(--pu) * 26) !important;
+    margin-inline: calc(var(--pu) * 6) !important;
+}
+
+#urlbar, #urlbar-input-container {
+    --urlbar-height: calc(var(--pu) * 25) !important;
+    --urlbar-toolbar-height: calc(var(--pu) * 26) !important;
+    font-size: calc(var(--pu) * 15) !important;
+}
+
+#urlbar-background, .urlbar-background, #searchbar {
+    background: rgba(241, 233, 219, 0.55) !important;
+    border: 1px solid #b4a993 !important;
+    border-radius: calc(var(--pu) * 6) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+#urlbar[focused] .urlbar-background {
+    background: var(--paper-tab) !important;
+    border-color: var(--ink-soft) !important;
+}
+
+#urlbar-input, .urlbar-input {
+    font-size: calc(var(--pu) * 15) !important;
+    color: var(--ink) !important;
+    letter-spacing: 0.04em !important;
+}
+
+#urlbar-input::placeholder, .urlbar-input::placeholder {
+    color: var(--ink-soft) !important;
+    opacity: 1 !important;
+}
+
+.urlbar-input-container {
+    position: relative !important;
+    padding-inline-start: calc(var(--pu) * 6) !important;
+}
+
+.urlbar-input-container::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--pu) * 8);
+    top: 50%;
+    transform: translateY(-50%);
+    width: calc(var(--pu) * 12.5);
+    height: calc(var(--pu) * 12.5);
+    background: url("img/search.png") center / contain no-repeat;
+}
+
+#urlbar .searchmode-switcher, .urlbar-go-button {
+    opacity: 0 !important;
+}
+
+toolbarspring, #nav-bar toolbarspring, #customizableui-special-spring1, #customizableui-special-spring2 {
+    display: none !important;
+}
+
+#urlbar-container {
+    flex: 1 1 auto !important;
+    max-width: none !important;
+    width: auto !important;
+}
+
+.searchmode-switcher {
+    background: none !important;
+}
+
+#identity-box, #identity-icon-box, #tracking-protection-icon-container {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+.urlbar-input-container[pageproxystate="invalid"] #identity-box,
+.urlbar-input-container[pageproxystate="invalid"] #tracking-protection-icon-container {
+    display: none !important;
+}
+
+.urlbar-input-container[pageproxystate="invalid"] #page-action-buttons > :not(#star-button-box) {
+    display: none !important;
+}
+
+#star-button-box {
+    display: flex !important;
+    visibility: visible !important;
+    background: none !important;
+}
+
+#page-action-buttons {
+    display: flex !important;
+    visibility: visible !important;
+}
+
+#star-button {
+    list-style-image: url("img/star.png") !important;
+    width: calc(var(--pu) * 14) !important;
+    height: calc(var(--pu) * 14) !important;
+    fill-opacity: 1 !important;
+}
+
+#star-button[starred] {
+    list-style-image: url("img/star_red.png") !important;
+}
+
+#ipprotection-button, #vpn-button, #unified-extensions-button, #fxa-toolbar-menu-button, #firefox-view-button, #alltabs-button, #sidebar-button, #save-to-pocket-button, #pocket-button {
+    display: none !important;
+}
+
+#urlbar .urlbarView {
+    --urlbarView-highlight-background: #bccde3 !important;
+}
+
+.urlbarView {
+    background: var(--paper-tab) !important;
+    color: var(--ink) !important;
+}
+
+#browser {
+    border-top: none !important;
+}
+
+menupopup, panel {
+    --panel-background: var(--paper-tab) !important;
+    --panel-color: var(--ink) !important;
+    --panel-border-color: var(--line) !important;
+    --arrowpanel-background: var(--paper-tab) !important;
+    --arrowpanel-color: var(--ink) !important;
+    --arrowpanel-border-color: var(--line) !important;
+}
