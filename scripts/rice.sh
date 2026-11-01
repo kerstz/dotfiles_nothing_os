@@ -92,6 +92,7 @@ apply() {
     mkdir -p "$STATE_DIR"
     printf '%s\n' "$name" > "$STATE_FILE"
     apply_gtk "$name"
+    [[ -x "$ROOT/quickshell/$name/apply.sh" ]] && "$ROOT/quickshell/$name/apply.sh"
 
     local live=0
     if command -v qs >/dev/null 2>&1 \

@@ -12,7 +12,8 @@
 set -u
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-SHELLDIR="${NOTHING_SHELL_DIR:-$HERE/../quickshell/nothing}"
+RICE="$(tr -d '[:space:]' < "${XDG_STATE_HOME:-$HOME/.local/state}/nothing/rice" 2>/dev/null)"
+SHELLDIR="${NOTHING_SHELL_DIR:-$HERE/../quickshell/${RICE:-nothing}}"
 
 if [ "$(qs -p "$SHELLDIR" ipc call lock activate 2>/dev/null)" = "ok" ]; then
     exit 0
