@@ -175,7 +175,9 @@ hl.bind(mainMod .. " + BracketRight", hl.dsp.focus({ direction = "r" }))
 local function closeSpecial()
     local sp = hl.get_active_special_workspace()
     if sp then
-        hl.dispatch(hl.dsp.workspace.toggle_special(sp.name:gsub("^special:", "")))
+        -- gsub returns (string, count); the extra parens drop count so
+        -- toggle_special gets one argument, not two.
+        hl.dispatch(hl.dsp.workspace.toggle_special((sp.name:gsub("^special:", ""))))
     end
 end
 
@@ -284,7 +286,8 @@ hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("playerctl play-pause"), { lo
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("playerctl next"),       { locked = true })
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
--- SUPER press-release alone: opens the launcher. Hyprland only emits the
--- release if no other key was pressed in between.
-hl.bind(mainMod .. " + SUPER_L", hl.dsp.global("quickshell:launcherToggle"))
-hl.bind(mainMod .. " + SUPER_R", hl.dsp.global("quickshell:launcherToggle"))
+-- SUPER press-release alone: opens the launcher. release=true is what
+-- actually restricts this to a lone tap - without it (0.57 regression)
+-- it also fires on every SUPER + <other key> combo.
+hl.bind(mainMod .. " + SUPER_L", hl.dsp.global("quickshell:launcherToggle"), { release = true })
+hl.bind(mainMod .. " + SUPER_R", hl.dsp.global("quickshell:launcherToggle"), { release = true })

@@ -2,8 +2,9 @@
 # Update an installed Nothing rice from this checkout, file by file.
 #
 # Copies every tracked file of the shell, the scripts, the Hyprland config
-# tree, the bundled wallpapers and the .desktop entries that differs from
-# what is installed, after copying each one it replaces into a dated
+# tree, the bundled wallpapers, the app/GTK/KDE/icon theme and the
+# .desktop entries that differs from what is installed, after copying
+# each one it replaces into a dated
 # backup folder, with a rollback script next to them. Files you own are
 # never in the list: custom.lua, local.lua, displays.lua, layout.lua,
 # input.lua, accent.lua live directly in ~/.config/hypr, config.json in
@@ -57,6 +58,7 @@ map_dest() {
         applications/servicemenus/*.desktop)
                               echo "$DATA/kio/servicemenus/${1#applications/servicemenus/}" ;;
         applications/*.desktop) echo "$DATA/applications/${1#applications/}" ;;
+        theme/*)              echo "$CONF/theme/${1#theme/}" ;;
         *) return 1 ;;
     esac
 }
@@ -78,7 +80,7 @@ while IFS= read -r -d '' f; do
         blob="$(git -C "$ROOT" hash-object -- "$dst")"
         known_blobs "$f" | grep -qx "$blob" || edited+=("$f")
     fi
-done < <(git -C "$ROOT" ls-files -z -- quickshell scripts hypr applications | sort -zu)
+done < <(git -C "$ROOT" ls-files -z -- quickshell scripts hypr applications theme | sort -zu)
 
 # Your own additions to the shell: not ours to touch, worth knowing about.
 extra=()
